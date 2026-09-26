@@ -1,0 +1,152 @@
+.products-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+
+.products-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  margin-bottom: 1.75rem;
+}
+
+
+.products-header p {
+  margin-top: 0.4rem;
+
+  color: var(--color-text-secondary);
+}
+
+
+.products-summary {
+  margin-bottom: 1.25rem;
+
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.products-summary strong {
+  color: var(--color-text);
+}
+
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  align-items: end;
+
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+
+.filter-actions {
+  display: flex;
+  gap: 0.75rem;
+
+  grid-column: 1 / -1;
+}
+
+
+.pagination-options {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  margin-bottom: 1.5rem;
+
+  label {
+    margin-bottom: 0;
+    white-space: nowrap;
+  }
+
+  select {
+    width: auto;
+  }
+}
+
+
+.products-list {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+
+  gap: 1.25rem;
+}
+
+
+.product-card {
+  padding: 1.5rem;
+
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+
+.product-card h2 {
+  margin-bottom: 0.75rem;
+
+  font-size: 1.05rem;
+}
+
+
+.product-card p {
+  margin-bottom: 0.4rem;
+
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+
+.product-card p:last-child {
+  margin-bottom: 0;
+}
+
+
+.product-card strong {
+  color: var(--color-text);
+}
+
+
+.product-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+
+.quantity-input {
+  width: 60px;
+  flex-shrink: 0;
+}
+
+
+.product-card-footer button {
+  flex: 1;
+  white-space: nowrap;
+}
+
+
+.out-of-stock {
+  color: var(--color-danger);
+  font-weight: 600;
+  font-size: 0.85rem;
+}

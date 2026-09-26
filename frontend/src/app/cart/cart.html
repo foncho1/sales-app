@@ -1,0 +1,152 @@
+<section class="cart-page">
+
+  <header class="cart-header">
+
+    <div>
+
+      <h1>
+        Carrito
+      </h1>
+
+      <p>
+        Revisa tus productos antes de crear el pedido.
+      </p>
+
+    </div>
+
+
+    @if (items().length > 0) {
+
+      <button
+        type="button"
+        (click)="clear_cart()"
+      >
+        Vaciar carrito
+      </button>
+
+    }
+
+  </header>
+
+
+  @if (error_message) {
+
+    <div class="error-message">
+      {{ error_message }}
+    </div>
+
+  }
+
+
+  @if (items().length > 0) {
+
+    <ul class="cart-list">
+
+      @for (
+        item of items();
+        track item.product.id
+      ) {
+
+        <li class="cart-row">
+
+          <div class="cart-item-info">
+
+            <span class="cart-item-name">
+              {{ item.product.name }}
+            </span>
+
+            <span class="cart-item-price">
+              ${{ item.product.price }} c/u
+            </span>
+
+          </div>
+
+
+          <input
+            type="number"
+            class="cart-quantity-input"
+            min="1"
+            [max]="item.product.stock"
+            [value]="item.quantity"
+            (change)="update_quantity(item.product.id, $event)"
+          />
+
+
+          <span class="cart-item-subtotal">
+            ${{ item.product.price * item.quantity }}
+          </span>
+
+
+          <button
+            type="button"
+            class="danger"
+            (click)="remove_item(item.product.id)"
+          >
+            Quitar
+          </button>
+
+        </li>
+
+      }
+
+    </ul>
+
+
+    <div class="cart-summary">
+
+      <span class="cart-total">
+        Total: <strong>${{ total() }}</strong>
+      </span>
+
+
+      <div class="cart-summary-actions">
+
+        <button
+          type="button"
+          (click)="continue_shopping()"
+          [disabled]="creating"
+        >
+          Seguir comprando
+        </button>
+
+
+        <button
+          type="button"
+          class="btn-primary"
+          [disabled]="creating"
+          (click)="create_order()"
+        >
+
+          @if (creating) {
+            Creando pedido...
+          } @else {
+            Crear pedido
+          }
+
+        </button>
+
+      </div>
+
+    </div>
+
+  } @else {
+
+    <div class="empty-state">
+
+      <p>
+        Tu carrito está vacío.
+      </p>
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="continue_shopping()"
+      >
+        Ver productos
+      </button>
+
+    </div>
+
+  }
+
+</section>

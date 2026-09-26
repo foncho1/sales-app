@@ -1,0 +1,116 @@
+<header class="navbar">
+
+  <div class="navbar-brand">
+
+    <a routerLink="/">
+      <span class="navbar-logo">S</span>
+      SalesApp
+    </a>
+
+  </div>
+
+
+  @if (current_user) {
+
+    <nav class="navbar-menu">
+
+      <a
+        routerLink="/products"
+        routerLinkActive="active"
+      >
+        Productos
+      </a>
+
+
+      @if (is_admin()) {
+
+        <a
+          routerLink="/admin/products"
+          routerLinkActive="active"
+        >
+          Administrar productos
+        </a>
+
+        <a
+          routerLink="/admin/categories"
+          routerLinkActive="active"
+        >
+          Categorías
+        </a>
+
+        <a
+          routerLink="/admin/users"
+          routerLinkActive="active"
+        >
+          Usuarios
+        </a>
+
+      }
+
+
+      <a
+        routerLink="/orders"
+        routerLinkActive="active"
+      >
+        Mis pedidos
+      </a>
+
+    </nav>
+
+
+    <div class="navbar-user">
+
+      <a
+        routerLink="/cart"
+        routerLinkActive="active"
+        class="cart-link"
+        aria-label="Carrito"
+      >
+        🛒
+
+        @if (cart_item_count() > 0) {
+
+          <span class="cart-badge">
+            {{ cart_item_count() }}
+          </span>
+
+        }
+
+      </a>
+
+
+      <span class="user-avatar">
+        {{ current_user.username.charAt(0).toUpperCase() }}
+      </span>
+
+      <span class="user-name">
+        {{ current_user.username }}
+      </span>
+
+      <span
+        class="role"
+        [class.role-admin]="is_admin()"
+      >
+        {{ current_user.role }}
+      </span>
+
+      <button
+        type="button"
+        class="logout-button"
+        (click)="logout()"
+      >
+        Salir
+      </button>
+
+    </div>
+
+  }
+
+</header>
+
+
+<main class="content">
+
+  <router-outlet></router-outlet>
+
+</main>

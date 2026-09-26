@@ -1,0 +1,18 @@
+<button
+  type="button"
+  class="theme-toggle"
+  [attr.aria-label]="theme_service.theme() === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
+  [attr.title]="theme_service.theme() === 'dark' ? 'Tema claro' : 'Tema oscuro'"
+  (click)="toggle_theme()"
+>
+
+  @if (theme_service.theme() === 'dark') {
+    ☀️
+  } @else {
+    🌙
+  }
+
+</button>
+
+
+<router-outlet></router-outlet>

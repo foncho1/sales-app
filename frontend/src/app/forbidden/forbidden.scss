@@ -1,0 +1,52 @@
+.forbidden {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  min-height: 100vh;
+  padding: 2rem;
+
+  text-align: center;
+}
+
+.forbidden-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.forbidden h1 {
+  font-size: 3.5rem;
+  color: var(--color-danger);
+}
+
+.forbidden h2 {
+  font-size: 1.4rem;
+}
+
+.forbidden p {
+  max-width: 360px;
+  margin-top: 0.25rem;
+  color: var(--color-text-secondary);
+}
+
+.forbidden-link {
+  margin-top: 1.5rem;
+  padding: 0.6rem 1.25rem;
+
+  border-radius: var(--radius-sm);
+
+  background: var(--color-primary);
+  color: #fff;
+
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+
+  transition: background-color 150ms ease;
+}
+
+.forbidden-link:hover {
+  background: var(--color-primary-hover);
+}

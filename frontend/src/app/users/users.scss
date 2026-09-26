@@ -1,0 +1,128 @@
+.users-page {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+
+.users-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  margin-bottom: 1.75rem;
+}
+
+
+.users-header p {
+  margin-top: 0.4rem;
+
+  color: var(--color-text-secondary);
+}
+
+
+.user-form {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 1rem;
+
+  padding: 1.5rem;
+
+  margin-bottom: 1.5rem;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.user-form .form-field {
+  flex: 1;
+}
+
+
+.users-list {
+  list-style: none;
+
+  margin: 0;
+
+  padding: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.75rem;
+}
+
+
+.user-row {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  padding: 1rem 1.5rem;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+
+  transition: box-shadow 150ms ease;
+}
+
+.user-row:hover {
+  box-shadow: var(--shadow-md);
+}
+
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+
+  min-width: 0;
+}
+
+
+.user-name {
+  font-weight: 600;
+}
+
+
+.user-email {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.status-badge {
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.role-admin-badge {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+
+.user-actions {
+  display: flex;
+
+  gap: 0.5rem;
+
+  flex-shrink: 0;
+}

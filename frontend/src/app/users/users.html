@@ -1,0 +1,256 @@
+<section class="users-page">
+
+  <header class="users-header">
+
+    <div>
+
+      <h1>
+        Usuarios
+      </h1>
+
+      <p>
+        Gestión de cuentas del sistema.
+      </p>
+
+    </div>
+
+
+    <button
+      type="button"
+      class="btn-primary"
+      (click)="create_user()"
+    >
+      + Nuevo usuario
+    </button>
+
+  </header>
+
+
+  @if (error_message) {
+
+    <div class="error-message">
+      {{ error_message }}
+    </div>
+
+  }
+
+
+  @if (form_open) {
+
+    <form
+      class="user-form"
+      [formGroup]="user_form"
+      (ngSubmit)="submit()"
+    >
+
+      <div class="form-field">
+
+        <label for="username">
+          Nombre de usuario
+        </label>
+
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+        />
+
+        @if (
+          user_form.controls.username.touched &&
+          user_form.controls.username.invalid
+        ) {
+
+          <small>
+
+            @if (user_form.controls.username.errors?.['required']) {
+              El nombre de usuario es obligatorio.
+            }
+
+            @if (user_form.controls.username.errors?.['minlength']) {
+              Debe tener mínimo 3 caracteres.
+            }
+
+            @if (user_form.controls.username.errors?.['maxlength']) {
+              No puede superar los 50 caracteres.
+            }
+
+          </small>
+
+        }
+
+      </div>
+
+
+      <div class="form-field">
+
+        <label for="email">
+          Email
+        </label>
+
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+        />
+
+        @if (
+          user_form.controls.email.touched &&
+          user_form.controls.email.invalid
+        ) {
+
+          <small>
+            Introduce un email válido.
+          </small>
+
+        }
+
+      </div>
+
+
+      <div class="form-field">
+
+        <label for="role">
+          Rol
+        </label>
+
+        <select
+          id="role"
+          formControlName="role"
+        >
+
+          <option value="USER">
+            Usuario
+          </option>
+
+          <option value="ADMIN">
+            Administrador
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="form-actions">
+
+        <button
+          type="button"
+          (click)="cancel_form()"
+          [disabled]="saving"
+        >
+          Cancelar
+        </button>
+
+
+        <button
+          type="submit"
+          [disabled]="saving"
+        >
+
+          @if (saving) {
+            Guardando...
+          } @else {
+            Guardar cambios
+          }
+
+        </button>
+
+      </div>
+
+    </form>
+
+  }
+
+
+  @if (loading) {
+
+    <div class="loading">
+
+      <p>
+        Cargando usuarios...
+      </p>
+
+    </div>
+
+  } @else if (users.length > 0) {
+
+    <ul class="users-list">
+
+      @for (
+        user of users;
+        track user.id
+      ) {
+
+        <li class="user-row">
+
+          <div class="user-info">
+
+            <span class="user-name">
+              {{ user.username }}
+            </span>
+
+            <span class="user-email">
+              {{ user.email }}
+            </span>
+
+          </div>
+
+
+          <span
+            class="status-badge"
+            [class.role-admin-badge]="user.role === 'ADMIN'"
+          >
+            {{ user.role }}
+          </span>
+
+
+          <div class="user-actions">
+
+            <button
+              type="button"
+              (click)="start_edit(user)"
+            >
+              Editar
+            </button>
+
+
+            @if (!is_self(user)) {
+
+              <button
+                type="button"
+                class="danger"
+                [disabled]="deleting_id === user.id"
+                (click)="delete_user(user)"
+              >
+
+                @if (deleting_id === user.id) {
+                  Eliminando...
+                } @else {
+                  Eliminar
+                }
+
+              </button>
+
+            }
+
+          </div>
+
+        </li>
+
+      }
+
+    </ul>
+
+  } @else {
+
+    <div class="empty-state">
+
+      <p>
+        No hay usuarios registrados.
+      </p>
+
+    </div>
+
+  }
+
+</section>

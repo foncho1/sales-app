@@ -1,0 +1,218 @@
+<section class="categories-page">
+
+  <header class="categories-header">
+
+    <div>
+
+      <h1>
+        Categorías
+      </h1>
+
+      <p>
+        Administración de categorías.
+      </p>
+
+    </div>
+
+
+    @if (!form_open) {
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="start_create()"
+      >
+        + Nueva categoría
+      </button>
+
+    }
+
+  </header>
+
+
+  @if (error_message) {
+
+    <div class="error-message">
+
+      {{ error_message }}
+
+    </div>
+
+  }
+
+
+  @if (form_open) {
+
+    <form
+      class="category-form"
+      [formGroup]="category_form"
+      (ngSubmit)="submit()"
+    >
+
+      <div class="form-field">
+
+        <label for="name">
+          Nombre
+        </label>
+
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Nombre de la categoría"
+        />
+
+
+        @if (
+          category_form.controls.name.touched &&
+          category_form.controls.name.invalid
+        ) {
+
+          <small>
+
+            @if (
+              category_form.controls.name.errors?.['required']
+            ) {
+
+              El nombre es obligatorio.
+
+            }
+
+            @if (
+              category_form.controls.name.errors?.['minlength']
+            ) {
+
+              El nombre debe tener mínimo 2 caracteres.
+
+            }
+
+            @if (
+              category_form.controls.name.errors?.['maxlength']
+            ) {
+
+              El nombre no puede superar los 50 caracteres.
+
+            }
+
+          </small>
+
+        }
+
+      </div>
+
+
+      <div class="form-actions">
+
+        <button
+          type="button"
+          (click)="cancel_form()"
+          [disabled]="saving"
+        >
+          Cancelar
+        </button>
+
+
+        <button
+          type="submit"
+          [disabled]="saving"
+        >
+
+          @if (saving) {
+
+            Guardando...
+
+          } @else if (editing_category) {
+
+            Guardar cambios
+
+          } @else {
+
+            Crear categoría
+
+          }
+
+        </button>
+
+      </div>
+
+    </form>
+
+  }
+
+
+  @if (loading) {
+
+    <div class="loading">
+
+      <p>
+        Cargando categorías...
+      </p>
+
+    </div>
+
+  } @else if (categories.length > 0) {
+
+    <ul class="categories-list">
+
+      @for (
+        category of categories;
+        track category.id
+      ) {
+
+        <li class="category-row">
+
+          <span class="category-name">
+            {{ category.name }}
+          </span>
+
+
+          <div class="category-actions">
+
+            <button
+              type="button"
+              (click)="start_edit(category)"
+            >
+              Editar
+            </button>
+
+
+            <button
+              type="button"
+              class="danger"
+              [disabled]="deleting_id === category.id"
+              (click)="delete_category(category)"
+            >
+
+              @if (deleting_id === category.id) {
+
+                Eliminando...
+
+              } @else {
+
+                Eliminar
+
+              }
+
+            </button>
+
+          </div>
+
+        </li>
+
+      }
+
+    </ul>
+
+  } @else {
+
+    <div class="empty-state">
+
+      <p>
+        No hay categorías registradas.
+      </p>
+
+    </div>
+
+  }
+
+</section>

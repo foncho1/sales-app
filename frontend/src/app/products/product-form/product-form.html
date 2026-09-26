@@ -1,0 +1,250 @@
+<section class="product-form-page">
+
+  <header class="product-form-header">
+
+    @if (editing_id === null) {
+
+      <h1>
+        Nuevo producto
+      </h1>
+
+      <p>
+        Crea un nuevo producto para el catálogo.
+      </p>
+
+    } @else {
+
+      <h1>
+        Editar producto
+      </h1>
+
+      <p>
+        Actualiza los datos del producto.
+      </p>
+
+    }
+
+  </header>
+
+
+  @if (error_message) {
+
+    <div class="error-message">
+
+      {{ error_message }}
+
+    </div>
+
+  }
+
+
+  <form
+    [formGroup]="product_form"
+    (ngSubmit)="submit()"
+  >
+
+
+    <!-- NOMBRE -->
+
+    <div class="form-field">
+
+      <label for="name">
+        Nombre
+      </label>
+
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+        placeholder="Nombre del producto"
+      />
+
+
+      @if (
+        product_form.controls.name.touched &&
+        product_form.controls.name.invalid
+      ) {
+
+        <small>
+
+          @if (
+            product_form.controls.name.errors?.['required']
+          ) {
+
+            El nombre es obligatorio.
+
+          }
+
+          @if (
+            product_form.controls.name.errors?.['minlength']
+          ) {
+
+            El nombre debe tener mínimo 3 caracteres.
+
+          }
+
+          @if (
+            product_form.controls.name.errors?.['maxlength']
+          ) {
+
+            El nombre no puede superar los 100 caracteres.
+
+          }
+
+        </small>
+
+      }
+
+    </div>
+
+
+    <!-- PRECIO -->
+
+    <div class="form-field">
+
+      <label for="price">
+        Precio
+      </label>
+
+      <input
+        id="price"
+        type="number"
+        min="0.01"
+        step="0.01"
+        formControlName="price"
+        placeholder="Precio"
+      />
+
+
+      @if (
+        product_form.controls.price.touched &&
+        product_form.controls.price.invalid
+      ) {
+
+        <small>
+          El precio debe ser mayor que 0.
+        </small>
+
+      }
+
+    </div>
+
+
+    <!-- STOCK -->
+
+    <div class="form-field">
+
+      <label for="stock">
+        Stock
+      </label>
+
+      <input
+        id="stock"
+        type="number"
+        min="0"
+        formControlName="stock"
+        placeholder="Cantidad disponible"
+      />
+
+
+      @if (
+        product_form.controls.stock.touched &&
+        product_form.controls.stock.invalid
+      ) {
+
+        <small>
+          El stock debe ser mayor o igual a 0.
+        </small>
+
+      }
+
+    </div>
+
+
+    <!-- CATEGORÍA -->
+
+    <div class="form-field">
+
+      <label for="category">
+        Categoría
+      </label>
+
+      <select
+        id="category"
+        formControlName="category_id"
+      >
+
+        <option [ngValue]="null">
+          Selecciona una categoría
+        </option>
+
+
+        @for (
+          category of categories;
+          track category.id
+        ) {
+
+          <option
+            [ngValue]="category.id"
+          >
+            {{ category.name }}
+          </option>
+
+        }
+
+      </select>
+
+
+      @if (
+        product_form.controls.category_id.touched &&
+        product_form.controls.category_id.invalid
+      ) {
+
+        <small>
+          Debes seleccionar una categoría.
+        </small>
+
+      }
+
+    </div>
+
+
+    <!-- BOTONES -->
+
+    <div class="form-actions">
+
+      <button
+        type="button"
+        (click)="cancel()"
+        [disabled]="loading"
+      >
+        Cancelar
+      </button>
+
+
+      <button
+        type="submit"
+        [disabled]="loading"
+      >
+
+        @if (loading) {
+
+          Guardando...
+
+        } @else if (editing_id === null) {
+
+          Crear producto
+
+        } @else {
+
+          Guardar cambios
+
+        }
+
+      </button>
+
+    </div>
+
+  </form>
+
+</section>

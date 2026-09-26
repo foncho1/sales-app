@@ -1,0 +1,407 @@
+<section class="orders-page">
+
+  <header class="orders-header">
+
+    <div>
+
+      <h1>
+        Mis pedidos
+      </h1>
+
+      <p>
+        Historial y gestión de pedidos.
+      </p>
+
+    </div>
+
+
+    <div class="orders-header-actions">
+
+      <button
+        type="button"
+        [disabled]="loading"
+        (click)="load_orders()"
+      >
+        ⟳ Refrescar
+      </button>
+
+
+      @if (!creating) {
+
+        <button
+          type="button"
+          class="btn-primary"
+          (click)="start_create()"
+        >
+          + Nuevo pedido
+        </button>
+
+      }
+
+    </div>
+
+  </header>
+
+
+  @if (list_error_message) {
+
+    <div class="error-message">
+
+      {{ list_error_message }}
+
+    </div>
+
+  }
+
+
+  <!-- FORMULARIO DE ALTA -->
+
+  @if (creating) {
+
+    <form
+      class="order-form"
+      [formGroup]="order_form"
+      (ngSubmit)="submit_order()"
+    >
+
+      @if (form_error_message) {
+
+        <div class="error-message">
+
+          {{ form_error_message }}
+
+        </div>
+
+      }
+
+
+      <div formArrayName="items" class="order-items">
+
+        @for (
+          item of items.controls;
+          track $index;
+          let i = $index
+        ) {
+
+          <div
+            class="order-item-row"
+            [formGroupName]="i"
+          >
+
+            <div class="form-field">
+
+              <label [for]="'product-' + i">
+                Producto
+              </label>
+
+              <select
+                [id]="'product-' + i"
+                formControlName="product_id"
+              >
+
+                <option [ngValue]="null">
+                  Selecciona un producto
+                </option>
+
+                @for (
+                  product of products;
+                  track product.id
+                ) {
+
+                  <option [ngValue]="product.id">
+                    {{ product.name }} (${{ product.price }})
+                  </option>
+
+                }
+
+              </select>
+
+            </div>
+
+
+            <div class="form-field quantity-field">
+
+              <label [for]="'quantity-' + i">
+                Cantidad
+              </label>
+
+              <input
+                [id]="'quantity-' + i"
+                type="number"
+                min="1"
+                formControlName="quantity"
+              />
+
+            </div>
+
+
+            <div class="row-subtotal">
+              ${{ row_subtotal(i) }}
+            </div>
+
+
+            <button
+              type="button"
+              class="danger"
+              [disabled]="items.length <= 1"
+              (click)="remove_item(i)"
+            >
+              Quitar
+            </button>
+
+          </div>
+
+        }
+
+      </div>
+
+
+      <button
+        type="button"
+        (click)="add_item()"
+      >
+        + Agregar línea
+      </button>
+
+
+      <div class="order-form-total">
+        Total estimado: <strong>${{ form_total }}</strong>
+      </div>
+
+
+      <div class="form-actions">
+
+        <button
+          type="button"
+          (click)="cancel_create()"
+          [disabled]="create_loading"
+        >
+          Cancelar
+        </button>
+
+
+        <button
+          type="submit"
+          [disabled]="create_loading"
+        >
+
+          @if (create_loading) {
+
+            Creando...
+
+          } @else {
+
+            Crear pedido
+
+          }
+
+        </button>
+
+      </div>
+
+    </form>
+
+  }
+
+
+  <!-- LISTA DE PEDIDOS -->
+
+  @if (loading) {
+
+    <div class="loading">
+
+      <p>
+        Cargando pedidos...
+      </p>
+
+    </div>
+
+  } @else if (orders.length > 0) {
+
+    <div class="orders-list">
+
+      @for (
+        order of orders;
+        track order.id
+      ) {
+
+        <article class="order-card">
+
+          <header class="order-card-header">
+
+            <div>
+              <strong>Pedido #{{ order.id }}</strong>
+              <span class="order-date">
+                {{ order.created_at | date: 'short' }}
+              </span>
+            </div>
+
+
+            @if (can_change_status()) {
+
+              <select
+                [value]="order.status"
+                [disabled]="updating_status_id === order.id"
+                (change)="change_status(order, $event)"
+              >
+
+                @for (
+                  status of order_statuses;
+                  track status
+                ) {
+
+                  <option [value]="status">
+                    {{ status }}
+                  </option>
+
+                }
+
+              </select>
+
+            } @else {
+
+              <span
+                class="status-badge"
+                [class]="'status-' + order.status.toLowerCase()"
+              >
+                {{ order.status }}
+              </span>
+
+            }
+
+          </header>
+
+
+          <ul class="order-items-list">
+
+            @for (
+              item of order.items;
+              track item.id
+            ) {
+
+              <li>
+                {{ item.quantity }} × {{ item.product.name }}
+                — ${{ item.subtotal }}
+              </li>
+
+            }
+
+          </ul>
+
+
+          <footer class="order-card-footer">
+
+            <span class="order-total">
+              Total: <strong>${{ order.total }}</strong>
+            </span>
+
+
+            <div class="order-card-actions">
+
+              <button
+                type="button"
+                [disabled]="downloading_id === order.id"
+                (click)="download_invoice(order)"
+              >
+
+                @if (downloading_id === order.id) {
+
+                  Generando...
+
+                } @else {
+
+                  📄 Descargar factura
+
+                }
+
+              </button>
+
+
+              @if (can_cancel(order)) {
+
+                <button
+                  type="button"
+                  class="danger"
+                  [disabled]="cancelling_id === order.id"
+                  (click)="cancel_order(order)"
+                >
+
+                  @if (cancelling_id === order.id) {
+
+                    Cancelando...
+
+                  } @else {
+
+                    Cancelar pedido
+
+                  }
+
+                </button>
+
+              }
+
+            </div>
+
+          </footer>
+
+        </article>
+
+      }
+
+    </div>
+
+
+    <nav
+      class="pagination"
+      aria-label="Paginación de pedidos"
+    >
+
+      <div class="pagination-info">
+
+        <span>
+          Página <strong>{{ page }}</strong> de <strong>{{ pages }}</strong>
+        </span>
+
+        <span>
+          Total: <strong>{{ total }}</strong>
+        </span>
+
+      </div>
+
+
+      <div class="pagination-controls">
+
+        <button
+          type="button"
+          [disabled]="!has_previous || loading"
+          (click)="previous_page()"
+        >
+          ← Anterior
+        </button>
+
+
+        <button
+          type="button"
+          [disabled]="!has_next || loading"
+          (click)="next_page()"
+        >
+          Siguiente →
+        </button>
+
+      </div>
+
+    </nav>
+
+  } @else {
+
+    <div class="empty-state">
+
+      <p>
+        No hay pedidos registrados.
+      </p>
+
+    </div>
+
+  }
+
+</section>

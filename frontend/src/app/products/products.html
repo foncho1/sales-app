@@ -1,0 +1,438 @@
+<section class="products-page">
+
+  <header class="products-header">
+
+  <div>
+
+    @if (manage_mode) {
+
+      <h1>
+        Administrar productos
+      </h1>
+
+      <p>
+        Edita o elimina productos del catálogo.
+      </p>
+
+    } @else {
+
+      <h1>
+        Productos
+      </h1>
+
+      <p>
+        Catálogo de productos
+      </p>
+
+    }
+
+  </div>
+
+
+    @if (manage_mode) {
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="create_product()"
+      >
+        + Nuevo producto
+      </button>
+
+    }
+
+  </header>
+
+
+  @if (error_message) {
+
+    <div class="error-message">
+      {{ error_message }}
+    </div>
+
+  }
+
+
+  @if (loading) {
+
+    <div class="loading">
+
+      <p>
+        Cargando productos...
+      </p>
+
+    </div>
+
+  } @else {
+
+    <div class="products-summary">
+
+      <p>
+        Productos encontrados:
+        <strong>{{ total }}</strong>
+      </p>
+
+    </div>
+
+
+    <!-- FILTROS -->
+
+    <section class="filters">
+
+      <!-- BUSCADOR -->
+
+      <div class="filter-field">
+
+        <label for="search">
+          Buscar producto
+        </label>
+
+        <input
+          id="search"
+          type="text"
+          placeholder="Buscar producto..."
+          [value]="search"
+          (input)="search_products($event)"
+        />
+
+      </div>
+
+
+      <!-- CATEGORÍA -->
+
+      <div class="filter-field">
+
+        <label for="category">
+          Categoría
+        </label>
+
+        <select
+          id="category"
+          [value]="category_id ?? ''"
+          (change)="change_category($event)"
+        >
+
+          <option value="">
+            Todas
+          </option>
+
+          @for (
+            category of categories;
+            track category.id
+          ) {
+
+            <option
+              [value]="category.id"
+            >
+              {{ category.name }}
+            </option>
+
+          }
+
+        </select>
+
+      </div>
+
+
+      <!-- PRECIO MÍNIMO -->
+
+      <div class="filter-field">
+
+        <label for="min-price">
+          Precio mínimo
+        </label>
+
+        <input
+          id="min-price"
+          type="number"
+          min="0"
+          placeholder="Precio mínimo"
+          [value]="min_price ?? ''"
+          (change)="change_min_price($event)"
+        />
+
+      </div>
+
+
+      <!-- PRECIO MÁXIMO -->
+
+      <div class="filter-field">
+
+        <label for="max-price">
+          Precio máximo
+        </label>
+
+        <input
+          id="max-price"
+          type="number"
+          min="0"
+          placeholder="Precio máximo"
+          [value]="max_price ?? ''"
+          (change)="change_max_price($event)"
+        />
+
+      </div>
+
+
+      <!-- ORDENAMIENTO -->
+
+      <div class="filter-field">
+
+        <label for="sort">
+          Ordenar por
+        </label>
+
+        <select
+          id="sort"
+          [value]="sort ?? ''"
+          (change)="change_sort($event)"
+        >
+
+          <option value="">
+            Predeterminado
+          </option>
+
+          <option value="name_asc">
+            Nombre A-Z
+          </option>
+
+          <option value="name_desc">
+            Nombre Z-A
+          </option>
+
+          <option value="price_asc">
+            Precio menor a mayor
+          </option>
+
+          <option value="price_desc">
+            Precio mayor a menor
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- BOTONES -->
+
+      <div class="filter-actions">
+
+        <button
+          type="button"
+          class="btn-primary"
+          (click)="apply_filters()"
+        >
+          Aplicar filtros
+        </button>
+
+        <button
+          type="button"
+          (click)="clear_filters()"
+        >
+          Limpiar filtros
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- OPCIONES DE PAGINACIÓN -->
+
+    <div class="pagination-options">
+
+      <label for="limit">
+        Productos por página
+      </label>
+
+      <select
+        id="limit"
+        [value]="limit"
+        (change)="change_limit($event)"
+      >
+
+        <option value="10">
+          10
+        </option>
+
+        <option value="20">
+          20
+        </option>
+
+        <option value="50">
+          50
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <!-- LISTA DE PRODUCTOS -->
+
+    @if (products.length > 0) {
+
+      <section class="products-list">
+
+        @for (
+          product of products;
+          track product.id
+        ) {
+
+          <article class="product-card">
+
+            <h2>
+              {{ product.name }}
+            </h2>
+
+            <p>
+              <strong>Categoría:</strong>
+              {{ product.category.name }}
+            </p>
+
+            <p>
+              <strong>Precio:</strong>
+              ${{ product.price }}
+            </p>
+
+            <p>
+              <strong>Stock:</strong>
+              {{ product.stock }}
+            </p>
+
+
+            <div class="product-card-footer">
+
+              @if (manage_mode) {
+
+                <button
+                  type="button"
+                  (click)="edit_product(product)"
+                >
+                  Editar
+                </button>
+
+
+                <button
+                  type="button"
+                  class="danger"
+                  [disabled]="deleting_id === product.id"
+                  (click)="delete_product(product)"
+                >
+
+                  @if (deleting_id === product.id) {
+                    Eliminando...
+                  } @else {
+                    Eliminar
+                  }
+
+                </button>
+
+              } @else if (product.stock > 0) {
+
+                <input
+                  #quantity_input
+                  type="number"
+                  class="quantity-input"
+                  min="1"
+                  [max]="product.stock"
+                  value="1"
+                />
+
+                <button
+                  type="button"
+                  class="btn-primary"
+                  (click)="add_to_cart(product, quantity_input.valueAsNumber)"
+                >
+
+                  @if (added_product_id === product.id) {
+                    ✓ Agregado
+                  } @else {
+                    🛒 Agregar
+                  }
+
+                </button>
+
+              } @else {
+
+                <span class="out-of-stock">
+                  Sin stock
+                </span>
+
+              }
+
+            </div>
+
+          </article>
+
+        }
+
+      </section>
+
+    } @else {
+
+      <div class="empty-state">
+
+        <p>
+          No se encontraron productos.
+        </p>
+
+      </div>
+
+    }
+
+
+    <!-- PAGINACIÓN -->
+
+    @if (total > 0) {
+
+      <nav
+        class="pagination"
+        aria-label="Paginación de productos"
+      >
+
+        <div class="pagination-info">
+
+          <span>
+            Página
+            <strong>{{ page }}</strong>
+            de
+            <strong>{{ pages }}</strong>
+          </span>
+
+          <span>
+            Total:
+            <strong>{{ total }}</strong>
+          </span>
+
+        </div>
+
+
+        <div class="pagination-controls">
+
+          <button
+            type="button"
+            [disabled]="!has_previous || loading"
+            (click)="previous_page()"
+          >
+            ← Anterior
+          </button>
+
+
+          <button
+            type="button"
+            [disabled]="!has_next || loading"
+            (click)="next_page()"
+          >
+            Siguiente →
+          </button>
+
+        </div>
+
+      </nav>
+
+    }
+
+  }
+
+</section>
